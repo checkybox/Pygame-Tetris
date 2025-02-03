@@ -3,8 +3,9 @@ from game import Game
 from colors import Colors
 
 # TODO:
+#  - spawn blocks above the grid (?)
 #  - fix score addition for 4 and more lines cleared
-#  - fix crash when rotating a block near the edge
+#  - (done) - fix crash when rotating a block near the edge
 #  - fix crash when rotating a block near the bottom
 #  - fix block overlap when rotating near another block
 #  - add settings menu for changing music, sound effects, and background color

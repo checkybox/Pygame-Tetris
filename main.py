@@ -107,10 +107,7 @@ def pause_menu():
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                try:
-                    if game.score > game.load_highscore():
-                        game.save_highscore()
-                except FileNotFoundError:
+                if game.score > game.load_highscore():
                     game.save_highscore()
                 pygame.quit()
                 sys.exit()
@@ -122,10 +119,7 @@ def pause_menu():
                 elif settings_button.collidepoint(event.pos):
                     print("Settings menu placeholder")
                 elif quit_button.collidepoint(event.pos):
-                    try:
-                        if game.score > game.load_highscore():
-                            game.save_highscore()
-                    except FileNotFoundError:
+                    if game.score > game.load_highscore():
                         game.save_highscore()
                     pygame.quit()
                     sys.exit()
@@ -153,10 +147,7 @@ def main_menu():
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                try:
-                    if game.score > game.load_highscore():
-                        game.save_highscore()
-                except FileNotFoundError:
+                if game.score > game.load_highscore():
                     game.save_highscore()
                 pygame.quit()
                 sys.exit()
@@ -182,10 +173,7 @@ main_menu()
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            try:
-                if game.score > game.load_highscore():
-                    game.save_highscore()
-            except FileNotFoundError:
+            if game.score > game.load_highscore():
                 game.save_highscore()
             pygame.quit()
             sys.exit()
@@ -198,10 +186,7 @@ while True:
 
             # game over handler
             if game.game_over:
-                try:
-                    if game.score > game.load_highscore():
-                        game.save_highscore()
-                except FileNotFoundError:
+                if game.score > game.load_highscore():
                     game.save_highscore()
                 game.game_over = False
                 game.reset()
@@ -235,7 +220,7 @@ while True:
     screen.blit(next_surface, (730, 550, 100, 100))
 
     if game.game_over:
-        screen.blit(game_over_surface, (640, 900, 100, 100))
+        screen.blit(game_over_surface, (640, 1200, 100, 100))
 
     pygame.draw.rect(screen, Colors.light_blue, score_rect, 0, 10)
     screen.blit(score_value_surface, score_value_surface.get_rect(centerx = score_rect.centerx, centery = score_rect.centery))

@@ -1,6 +1,5 @@
-from colors import Colors
 import pygame
-
+from colors import Colors
 from position import Position as Pos
 
 

@@ -35,8 +35,11 @@ class Game:
             file.write(str(self.score))
 
     def load_highscore(self):
-        with open("highscore.txt", "r") as file:
-            return int(file.read())
+        try:
+            with open("highscore.txt", "r") as file:
+                return int(file.read())
+        except FileNotFoundError:
+            return 0
 
     def get_random_block(self):
         if len(self.blocks) == 0:

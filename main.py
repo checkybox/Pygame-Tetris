@@ -2,8 +2,11 @@ import pygame, sys
 from game import Game
 from colors import Colors
 
-# idk what this is for
-#Smail
+# features:
+# - count score and highscore
+# - change blocks and background colors (by pre-defined schemes or by hand)
+# - choose difficulty (change game loop interval)
+
 # TODO:
 #  - spawn blocks above the grid (?)
 #  - fix score addition for 4 and more lines cleared
@@ -13,28 +16,42 @@ from colors import Colors
 #  - add settings menu for changing music, sound effects, and background color
 #  - add pause menu
 #  - add high score
+#  - (wip) show main menu before starting the game
 #  - add better game over screen
 #  - add animations for clearing rows (?)
 
 pygame.init()
 
+# initialize screen and clock
+screen = pygame.display.set_mode((1000, 1240))
+pygame.display.set_caption("Pygame Tetris")
+clock = pygame.time.Clock()
+
+# fonts
 title_font = pygame.font.Font(None, 80)
+
+# text surfaces
 score_surface = title_font.render("Score", True, Colors.white)
 next_surface = title_font.render("Next", True, Colors.white)
 game_over_surface = title_font.render("GAME OVER", True, Colors.white)
 
+# ui elements
 score_rect = pygame.Rect(640, 110, 340, 120)
 next_rect = pygame.Rect(640, 430, 340, 360)
 
-screen = pygame.display.set_mode((1000, 1240))
-pygame.display.set_caption("Pygame Tetris")
-
-clock = pygame.time.Clock()
-
+# game instance
 game = Game()
 
+# custom user event
 GAME_UPDATE = pygame.USEREVENT
-pygame.time.set_timer(GAME_UPDATE, 300)
+pygame.time.set_timer(GAME_UPDATE, 500)
+
+def draw_text(text, font, color, surface, x, y):
+    text_obj = font.render(text, True, color)
+    text_rect = text_obj.get_rect(center = (x, y))
+    surface.blit(text_obj, text_rect)
+
+
 
 while True:
     for event in pygame.event.get():
@@ -42,24 +59,23 @@ while True:
             pygame.quit()
             sys.exit()
         if event.type == pygame.KEYDOWN:
-            if game.game_over == True:
+            if game.game_over: # restart game after key press
                 game.game_over = False
                 game.reset()
-            if event.key == pygame.K_LEFT and game.game_over == False:
+            if event.key == pygame.K_LEFT and not game.game_over:
                 game.move_left()
-            if event.key == pygame.K_RIGHT and game.game_over == False:
+            if event.key == pygame.K_RIGHT and not game.game_over:
                 game.move_right()
-            if event.key == pygame.K_DOWN and game.game_over == False:
+            if event.key == pygame.K_DOWN and not game.game_over:
                 game.move_down()
                 game.update_score(0, 1)
-            if event.key == pygame.K_UP and game.game_over == False:
+            if event.key == pygame.K_UP and not game.game_over:
                 game.rotate()
-        if event.type == GAME_UPDATE and game.game_over == False:
+        if event.type == GAME_UPDATE and not game.game_over:
             game.move_down()
 
-    # Drawing
+    # drawing
     score_value_surface = title_font.render(str(game.score), True, Colors.white)
-
     screen.fill(Colors.dark_blue)
     screen.blit(score_surface, (730, 40, 100, 100))
     screen.blit(next_surface, (750, 250, 100, 100))

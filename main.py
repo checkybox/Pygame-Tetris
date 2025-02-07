@@ -3,7 +3,7 @@ from game import Game
 from colors import Colors
 
 # idk what this is for
-
+#Smail
 # TODO:
 #  - spawn blocks above the grid (?)
 #  - fix score addition for 4 and more lines cleared

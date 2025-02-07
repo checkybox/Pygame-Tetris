@@ -62,7 +62,7 @@ while True:
     screen.blit(score_surface, (730, 40, 100, 100))
     screen.blit(next_surface, (750, 250, 100, 100))
 
-    if game.game_over == True:
+    if game.game_over:
         screen.blit(game_over_surface, (640, 900, 100, 100))
 
     pygame.draw.rect(screen, Colors.light_blue, score_rect, 0, 10)

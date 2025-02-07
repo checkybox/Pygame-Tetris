@@ -11,6 +11,7 @@ class Game:
         self.next_block = self.get_random_block()
         self.game_over = False
         self.score = 0
+        self.highscore = 0
         self.rotate_sound = pygame.mixer.Sound("sounds/rotate.ogg")
         self.clear_sound = pygame.mixer.Sound("sounds/clear.ogg")
 
@@ -25,7 +26,17 @@ class Game:
             self.score += 300
         elif lines_cleared == 3:
             self.score += 500
+        elif lines_cleared >= 4:
+            self.score += 1000
         self.score += move_down_points
+
+    def save_highscore(self):
+        with open("highscore.txt", "w") as file:
+            file.write(str(self.score))
+
+    def load_highscore(self):
+        with open("highscore.txt", "r") as file:
+            return int(file.read())
 
     def get_random_block(self):
         if len(self.blocks) == 0:
@@ -69,6 +80,7 @@ class Game:
         self.current_block = self.get_random_block()
         self.next_block = self.get_random_block()
         self.score = 0
+        self.highscore = self.load_highscore()
 
     def block_fits(self):
         tiles = self.current_block.get_cell_positions()
@@ -97,9 +109,9 @@ class Game:
 
         # if next block is IBlock
         if self.next_block.id == 3:
-            self.next_block.draw(screen, 510, 580)
+            self.next_block.draw(screen, 510, 780)
         # if next block is OBlock
         elif self.next_block.id == 4:
-            self.next_block.draw(screen, 510, 560)
+            self.next_block.draw(screen, 510, 760)
         else:
-            self.next_block.draw(screen, 540, 540)
+            self.next_block.draw(screen, 540, 740)

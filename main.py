@@ -2,6 +2,8 @@ import pygame, sys, os
 
 from game import Game
 from colors import Colors
+from menus import draw_text, draw_button, pause_menu, main_menu
+# from menus import main_menu, pause_menu, draw_text, draw_button
 
 # TODO:
 #  - features:
@@ -9,6 +11,7 @@ from colors import Colors
 #  - change blocks and background colors (by pre-defined schemes or by hand)
 #  - choose difficulty (change game loop interval)
 #  -
+#  - ability to turn off music/sounds
 #  - spawn blocks above the grid (?)
 #  - (done) - fix score addition for 4 and more lines cleared
 #  - (done) - fix crash when rotating a block near the edge
@@ -16,8 +19,7 @@ from colors import Colors
 #  - fix block overlap when rotating near another block
 #  - add settings menu for changing music, sound effects, and background color
 #  - (wip) add pause menu
-#  - (wip) add high score
-#  - (wip) show main menu before starting the game
+#  - (done) show main menu before starting the game
 #  - add better game over screen
 #  - add animations for clearing rows (?)
 
@@ -57,12 +59,6 @@ BOUNCE_UPDATE = pygame.USEREVENT + 1
 pygame.time.set_timer(GAME_UPDATE, 500)
 pygame.time.set_timer(BOUNCE_UPDATE, 1000)
 
-# try to load highscore from file
-try:
-    game.highscore = game.load_highscore()
-except FileNotFoundError:
-    game.highscore = 0
-
 # pause state
 paused = False
 
@@ -72,102 +68,8 @@ BUTTON_COLOR = Colors.light_blue
 BUTTON_HOVER_COLOR = Colors.white
 TEXT_COLOR = Colors.dark_blue
 
-# this function draws centered text
-def draw_text(text, font, color, surface, x, y):
-    text_obj = font.render(text, True, color)
-    text_rect = text_obj.get_rect(center = (x, y))
-    surface.blit(text_obj, text_rect)
-
-# guess what this does
-def draw_button(text, x, y, width, height):
-    mouse_x, mouse_y = pygame.mouse.get_pos()
-    button_rect = pygame.Rect(x, y, width, height)
-
-    color = BUTTON_HOVER_COLOR if button_rect.collidepoint(mouse_x, mouse_y) else BUTTON_COLOR
-    pygame.draw.rect(screen, color, button_rect, border_radius=10)
-
-    draw_text(text, press_2p_40f, TEXT_COLOR, screen, x + width // 2, y + height // 2)
-    return button_rect
-
-def pause_menu():
-    global paused
-    bounce_offset = 0
-    bounce_direction = 15
-
-    while paused:
-        screen.fill(Colors.dark_blue)
-        draw_text("PAUSED", press_2p_120f, Colors.white, screen, SCREEN_WIDTH // 2, 300 + bounce_offset)
-
-        # draw buttons
-        continue_button = draw_button("Continue", 350 - 50, 450, BUTTON_WIDTH + 100, BUTTON_HEIGHT)
-        settings_button = draw_button("Settings", 350 - 50, 550, BUTTON_WIDTH + 100, BUTTON_HEIGHT)
-        quit_button = draw_button("Quit", 350 - 50, 650, BUTTON_WIDTH + 100, BUTTON_HEIGHT)
-
-        pygame.display.update()
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                if game.score > game.load_highscore():
-                    game.save_highscore()
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                paused = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if continue_button.collidepoint(event.pos):
-                    paused = False
-                elif settings_button.collidepoint(event.pos):
-                    print("Settings menu placeholder")
-                elif quit_button.collidepoint(event.pos):
-                    if game.score > game.load_highscore():
-                        game.save_highscore()
-                    pygame.quit()
-                    sys.exit()
-
-            # bounce animation
-            if event.type == BOUNCE_UPDATE:
-                if bounce_offset >= 15:
-                    bounce_direction = -15
-                elif bounce_offset <= -15:
-                    bounce_direction = 15
-                bounce_offset += bounce_direction
-
-# displays main menu and waits for input
-def main_menu():
-    bounce_offset = 0
-    bounce_direction = 15
-
-    while True:
-        screen.fill(Colors.dark_blue)
-        draw_text("TETRIS", press_2p_120f, Colors.white, screen, 500, 300 + bounce_offset)
-        draw_text("Press ENTER to Start", press_2p_40f, Colors.white, screen, 500, 500)
-        draw_text("Press Q to Quit", press_2p_40f, Colors.white, screen, 500, 600)
-
-        pygame.display.update()
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                if game.score > game.load_highscore():
-                    game.save_highscore()
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    return
-                if event.key == pygame.K_q:
-                    pygame.quit()
-                    sys.exit()
-
-            # bounce animation
-            if event.type == BOUNCE_UPDATE:
-                if bounce_offset >= 15:
-                    bounce_direction = -15
-                elif bounce_offset <= -15:
-                    bounce_direction = 15
-                bounce_offset += bounce_direction
-
 # run the main menu first
-main_menu()
+main_menu(screen, game, press_2p_120f, press_2p_40f, BOUNCE_UPDATE)
 
 # game loop
 while True:
@@ -182,7 +84,7 @@ while True:
             # pause button handler
             if event.key == pygame.K_ESCAPE:
                 paused = True
-                pause_menu()
+                pause_menu(screen, game, press_2p_120f, press_2p_40f, BOUNCE_UPDATE, SCREEN_WIDTH, paused)
 
             # game over handler
             if game.game_over:

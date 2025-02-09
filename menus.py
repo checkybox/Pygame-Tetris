@@ -33,7 +33,8 @@ def settings_menu(screen, game, SCREEN_WIDTH, GAME_UPDATE):
 
         # dynamic buttons
         music_toggle = draw_button(game.is_music_on_states[game.is_music_on], 350 - 100, 450, BUTTON_WIDTH + 200, BUTTON_HEIGHT, screen, Fonts.press_2p(40))
-        difficulty_toggle = draw_button(game.difficulty_states[game.difficulty], 350 - 100, 550, BUTTON_WIDTH + 200, BUTTON_HEIGHT, screen, Fonts.press_2p(40))
+        sounds_toggle = draw_button(game.is_sounds_on_states[game.is_sounds_on], 350 - 100, 550, BUTTON_WIDTH + 200, BUTTON_HEIGHT, screen, Fonts.press_2p(40))
+        difficulty_toggle = draw_button(game.difficulty_states[game.difficulty], 350 - 100, 650, BUTTON_WIDTH + 200, BUTTON_HEIGHT, screen, Fonts.press_2p(40))
 
         pygame.display.update()
 
@@ -46,13 +47,19 @@ def settings_menu(screen, game, SCREEN_WIDTH, GAME_UPDATE):
             # exit settings on escape press
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 running = False
+                game.rotate_sound.play()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if music_toggle.collidepoint(event.pos):
                     game.toggle_music()
+                    game.rotate_sound.play()
+                elif sounds_toggle.collidepoint(event.pos):
+                    game.toggle_sounds()
+                    game.rotate_sound.play()
                 elif difficulty_toggle.collidepoint(event.pos):
                     new_difficulty_ms = game.toggle_difficulty()
                     pygame.time.set_timer(GAME_UPDATE, new_difficulty_ms)
+                    game.rotate_sound.play()
 
 def pause_menu(screen, game, BOUNCE_UPDATE, SCREEN_WIDTH, GAME_UPDATE, paused):
     bounce_offset = 0
@@ -77,16 +84,20 @@ def pause_menu(screen, game, BOUNCE_UPDATE, SCREEN_WIDTH, GAME_UPDATE, paused):
 
             # unpause on escape
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                game.rotate_sound.play()
                 paused = False
 
             # mouse button click event
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if continue_button.collidepoint(event.pos):
+                    game.rotate_sound.play()
                     paused = False
                 elif settings_button.collidepoint(event.pos):
                     settings_menu(screen, game, SCREEN_WIDTH, GAME_UPDATE)
+                    game.rotate_sound.play()
                 elif quit_button.collidepoint(event.pos):
                     game.save_score(game.score)
+                    game.rotate_sound.play()
                     pygame.quit()
                     sys.exit()
 
@@ -114,14 +125,17 @@ def main_menu(screen, game, BOUNCE_UPDATE, SCREEN_WIDTH, GAME_UPDATE):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 game.save_score(game.score)
+                game.rotate_sound.play()
                 pygame.quit()
                 sys.exit()
 
             # mouse button click event
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if play_button.collidepoint(event.pos):
+                    game.rotate_sound.play()
                     return
                 elif settings_button.collidepoint(event.pos):
+                    game.rotate_sound.play()
                     settings_menu(screen, game, SCREEN_WIDTH, GAME_UPDATE)
                 elif quit_button.collidepoint(event.pos):
                     game.save_score(game.score)
@@ -137,6 +151,7 @@ def main_menu(screen, game, BOUNCE_UPDATE, SCREEN_WIDTH, GAME_UPDATE):
                 bounce_offset += bounce_direction
 
 def game_over_menu(screen, game, BUTTON_WIDTH, BUTTON_HEIGHT, SCREEN_WIDTH):
+    game.game_over_sound.play()
     while game.game_over:
         screen.fill(Colors.dark_blue)
         draw_text("GAME OVER", Fonts.press_2p(100), Colors.white, screen, SCREEN_WIDTH // 2, 300)

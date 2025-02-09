@@ -17,19 +17,12 @@ class Game:
         self.points_modifier = 100
         self.move_down_points = 1
         self.is_music_on = True
+        self.is_sounds_on = True
+
+        # initialize rotate, clear, and game over sounds
         self.rotate_sound = pygame.mixer.Sound("assets/sounds/rotate.ogg")
         self.clear_sound = pygame.mixer.Sound("assets/sounds/clear.ogg")
-
-        self.is_music_on_states = {
-            True: "Music:ON",
-            False: "Music:OFF"
-        }
-
-        self.difficulty_states = {
-            0 : "Mode:Easy",
-            1 : "Mode:Medium",
-            2 : "Mode:Hard"
-        }
+        self.game_over_sound = pygame.mixer.Sound("assets/sounds/game_over.mp3")
 
         # load main menu music
         pygame.mixer.music.load("assets/sounds/music.ogg")
@@ -37,6 +30,22 @@ class Game:
 
         # load highscore on game initialization
         self.highscore = self.load_highscore()
+
+        self.is_music_on_states = {
+            True: "Music:ON",
+            False: "Music:OFF"
+        }
+
+        self.is_sounds_on_states = {
+            True: "Sounds:ON",
+            False: "Sounds:OFF"
+        }
+
+        self.difficulty_states = {
+            0: "Mode:Easy",
+            1: "Mode:Medium",
+            2: "Mode:Hard"
+        }
 
     def toggle_music(self):
         if self.is_music_on:
@@ -46,6 +55,12 @@ class Game:
             self.is_music_on = True
             pygame.mixer.music.load("assets/sounds/music.ogg")
             pygame.mixer.music.play(-1)
+
+    def toggle_sounds(self):
+        if self.is_sounds_on:
+            self.is_sounds_on = False
+        else:
+            self.is_sounds_on = True
 
     def toggle_difficulty(self):
         if self.difficulty == 0:
@@ -118,8 +133,9 @@ class Game:
         self.next_block = self.get_random_block()
         rows_cleared = self.grid.clear_full_rows()
         if rows_cleared > 0:
-            self.clear_sound.play()
             self.update_score(rows_cleared, 0)
+            if self.is_sounds_on:
+                self.clear_sound.play()
         if not self.block_fits():
             self.game_over = True
 
@@ -143,7 +159,8 @@ class Game:
         if not self.block_inside() or not self.block_fits():
             self.current_block.undo_rotation()
         else:
-            self.rotate_sound.play()
+            if self.is_sounds_on:
+                self.rotate_sound.play()
 
     def block_inside(self):
         tiles = self.current_block.get_cell_positions()

@@ -73,8 +73,7 @@ def pause_menu(screen, game, BOUNCE_UPDATE, SCREEN_WIDTH, GAME_UPDATE, paused):
         # draw buttons
         continue_button = draw_button("Continue", 350 - 50, 450, BUTTON_WIDTH + 100, BUTTON_HEIGHT, screen, Fonts.press_2p(40))
         settings_button = draw_button("Settings", 350 - 50, 550, BUTTON_WIDTH + 100, BUTTON_HEIGHT, screen, Fonts.press_2p(40))
-        help_button = draw_button("Help", 350 - 50, 650, BUTTON_WIDTH + 100, BUTTON_HEIGHT, screen, Fonts.press_2p(40))
-        quit_button = draw_button("Quit", 350 - 50, 750, BUTTON_WIDTH + 100, BUTTON_HEIGHT, screen, Fonts.press_2p(40))
+        quit_button = draw_button("Quit", 350 - 50, 650, BUTTON_WIDTH + 100, BUTTON_HEIGHT, screen, Fonts.press_2p(40))
 
         pygame.display.update()
 
@@ -94,8 +93,6 @@ def pause_menu(screen, game, BOUNCE_UPDATE, SCREEN_WIDTH, GAME_UPDATE, paused):
                     paused = False
                 elif settings_button.collidepoint(event.pos):
                     settings_menu(screen, game, SCREEN_WIDTH, GAME_UPDATE)
-                elif help_button.collidepoint(event.pos):
-                    print("Help menu placeholder")
                 elif quit_button.collidepoint(event.pos):
                     game.save_score(game.score)
                     pygame.quit()

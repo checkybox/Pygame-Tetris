@@ -12,35 +12,39 @@ class Game:
         self.game_over = False
         self.score = 0
         self.highscore = 0
+        self.is_music_on = True
         self.rotate_sound = pygame.mixer.Sound("assets/sounds/rotate.ogg")
         self.clear_sound = pygame.mixer.Sound("assets/sounds/clear.ogg")
 
-        # play music indefinitely
+        # load main menu music
         pygame.mixer.music.load("assets/sounds/music.ogg")
         pygame.mixer.music.play(-1)
 
         # load highscore on game initialization
         self.highscore = self.load_highscore()
 
+    def toggle_music(self):
+        if self.is_music_on:
+            self.is_music_on = False
+            pygame.mixer.music.stop()
+        else:
+            self.is_music_on = True
+            pygame.mixer.music.load("assets/sounds/music.ogg")
+            pygame.mixer.music.play(-1)
+
     def update_score(self, lines_cleared, move_down_points):
-        # if lines_cleared == 1:
-        #     self.score += 100
-        # elif lines_cleared == 2:
-        #     self.score += 200
-        # elif lines_cleared == 3:
-        #     self.score += 400
-        # elif lines_cleared == 4:
-        #     self.score += 800
-        # elif lines_cleared == 5:
-        #     self.score += 1600
-        # self.score += move_down_points
         if lines_cleared > 0:
             self.score += int(100 * (2 ** (lines_cleared - 1)))
         self.score += move_down_points
 
-    def save_highscore(self):
-        with open("highscore.txt", "w") as file:
-            file.write(str(self.score))
+    # def save_highscore(self):
+    #     with open("highscore.txt", "w") as file:
+    #         file.write(str(self.score))
+
+    def save_score(self, score):
+        if self.score > self.highscore:
+            with open("highscore.txt", "w") as file:
+                file.write(str(self.score))
 
     def load_highscore(self):
         try:

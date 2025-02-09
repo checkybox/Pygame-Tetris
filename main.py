@@ -2,7 +2,7 @@ import pygame, sys, os
 
 from game import Game
 from colors import Colors
-from menus import draw_text, draw_button, pause_menu, main_menu
+from menus import draw_text, draw_button, pause_menu, main_menu, game_over_screen
 # from menus import main_menu, pause_menu, draw_text, draw_button
 
 # TODO:
@@ -20,7 +20,7 @@ from menus import draw_text, draw_button, pause_menu, main_menu
 #  - add settings menu for changing music, sound effects, and background color
 #  - (wip) add pause menu
 #  - (done) show main menu before starting the game
-#  - add better game over screen
+#  - (done) add better game over screen
 #  - add animations for clearing rows (?)
 
 pygame.init()
@@ -81,19 +81,19 @@ while True:
             sys.exit()
 
         if event.type == pygame.KEYDOWN:
-            # pause button handler
+            # Pause button handler
             if event.key == pygame.K_ESCAPE:
                 paused = True
                 pause_menu(screen, game, press_2p_120f, press_2p_40f, BOUNCE_UPDATE, SCREEN_WIDTH, paused)
 
-            # game over handler
+            # Game over handler
             if game.game_over:
                 if game.score > game.load_highscore():
                     game.save_highscore()
-                game.game_over = False
                 game.reset()
+                game_over_screen(screen, game, press_2p_120f, press_2p_40f, BUTTON_WIDTH, BUTTON_HEIGHT, SCREEN_WIDTH)
 
-            # game controls handler
+            # Game controls handler
             if not game.game_over:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     game.move_left()
@@ -108,8 +108,7 @@ while True:
         if event.type == GAME_UPDATE and not game.game_over:
             game.move_down()
 
-    # drawing
-    # if score is higher than highscore, display score instead
+    # Drawing
     score_value_surface = title_f.render(str(game.score), True, Colors.white)
     if not game.score > game.highscore:
         highscore_value_surface = title_f.render(str(game.highscore), True, Colors.white)
@@ -125,13 +124,13 @@ while True:
         screen.blit(game_over_surface, (640, 1200, 100, 100))
 
     pygame.draw.rect(screen, Colors.light_blue, score_rect, 0, 10)
-    screen.blit(score_value_surface, score_value_surface.get_rect(centerx = score_rect.centerx, centery = score_rect.centery))
+    screen.blit(score_value_surface, score_value_surface.get_rect(centerx=score_rect.centerx, centery=score_rect.centery))
 
     pygame.draw.rect(screen, Colors.light_blue, highscore_rect, 0, 10)
-    screen.blit(highscore_value_surface, highscore_value_surface.get_rect(centerx = highscore_rect.centerx, centery = highscore_rect.centery))
+    screen.blit(highscore_value_surface, highscore_value_surface.get_rect(centerx=highscore_rect.centerx, centery=highscore_rect.centery))
 
     pygame.draw.rect(screen, Colors.light_blue, next_rect, 0, 10)
     game.draw(screen)
 
     pygame.display.update()
-    clock.tick(60)
+    clock.tick(10)

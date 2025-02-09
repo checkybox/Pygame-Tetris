@@ -2,24 +2,24 @@ import pygame, sys, os
 
 from game import Game
 from colors import Colors
-from menus import draw_text, draw_button, pause_menu, main_menu
+from menus import draw_text, draw_button, pause_menu, main_menu, game_over_menu
 
 # TODO:
 #  - features:
-#  - (done) - count score and highscore
+#  ---------- (done) - count score and highscore
 #  - change blocks and background colors (by pre-defined schemes or by hand)
-#  - choose difficulty (change game loop interval)
+#  ---------- (done) choose difficulty (change game loop interval)
 #  -
-#  - ability to turn off music/sounds
+#  - (wip) ability to turn off music/sounds
 #  - spawn blocks above the grid (?)
-#  - (done) - fix score addition for 4 and more lines cleared
-#  - (done) - fix crash when rotating a block near the edge
+#  ---------- (done) - fix score addition for 4 and more lines cleared
+#  ---------- (done) - fix crash when rotating a block near the edge
 #  - fix crash when rotating a block near the bottom
 #  - fix block overlap when rotating near another block
 #  - add settings menu for changing music, sound effects, and background color
-#  - (wip) add pause menu
-#  - (done) show main menu before starting the game
-#  - add better game over screen
+#  ---------- (done) add pause menu
+#  ---------- (done) show main menu before starting the game
+#  - (wip) add better game over screen
 #  - add animations for clearing rows (?)
 
 pygame.init()
@@ -55,7 +55,7 @@ next_rect = pygame.Rect(640, 630, 340, 360)
 game = Game()
 GAME_UPDATE = pygame.USEREVENT
 BOUNCE_UPDATE = pygame.USEREVENT + 1
-pygame.time.set_timer(GAME_UPDATE, 500)
+pygame.time.set_timer(GAME_UPDATE, game.difficulty_ms)
 pygame.time.set_timer(BOUNCE_UPDATE, 1000)
 
 # pause state
@@ -68,7 +68,7 @@ BUTTON_HOVER_COLOR = Colors.white
 TEXT_COLOR = Colors.dark_blue
 
 # run the main menu first
-main_menu(screen, game, BOUNCE_UPDATE, SCREEN_WIDTH)
+main_menu(screen, game, BOUNCE_UPDATE, SCREEN_WIDTH, GAME_UPDATE)
 
 # game loop
 while True:
@@ -78,17 +78,19 @@ while True:
             pygame.quit()
             sys.exit()
 
+        # game over handler
+        if game.game_over:
+            game.save_score(game.score)
+            game_over_menu(screen, game, BUTTON_WIDTH, BUTTON_HEIGHT, SCREEN_WIDTH)
+            game.game_over = False
+            game.reset()
+            continue
+
         if event.type == pygame.KEYDOWN:
             # pause button handler
             if event.key == pygame.K_ESCAPE:
                 paused = True
-                pause_menu(screen, game, BOUNCE_UPDATE, SCREEN_WIDTH, paused)
-
-            # game over handler
-            if game.game_over:
-                game.save_score(game.score)
-                game.game_over = False
-                game.reset()
+                pause_menu(screen, game, BOUNCE_UPDATE, SCREEN_WIDTH, GAME_UPDATE, paused)
 
             # game controls handler
             if not game.game_over:
@@ -98,7 +100,7 @@ while True:
                     game.move_right()
                 elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     game.move_down()
-                    game.update_score(0, 1)
+                    game.update_score(0, game.move_down_points)
                 elif event.key == pygame.K_UP or event.key == pygame.K_w:
                     game.rotate()
 
@@ -118,8 +120,8 @@ while True:
     screen.blit(highscore_surface, (630, 260, 100, 100))
     screen.blit(next_surface, (730, 550, 100, 100))
 
-    if game.game_over:
-        screen.blit(game_over_surface, (640, 1200, 100, 100))
+    # if game.game_over:
+    #     screen.blit(game_over_surface, (640, 1200, 100, 100))
 
     pygame.draw.rect(screen, Colors.light_blue, score_rect, 0, 10)
     screen.blit(score_value_surface, score_value_surface.get_rect(centerx = score_rect.centerx, centery = score_rect.centery))

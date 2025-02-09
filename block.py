@@ -2,7 +2,6 @@ import pygame
 from colors import Colors
 from position import Position as Pos
 
-
 class Block:
     def __init__(self, id):
         self.id = id

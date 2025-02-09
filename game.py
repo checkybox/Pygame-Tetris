@@ -12,6 +12,10 @@ class Game:
         self.game_over = False
         self.score = 0
         self.highscore = 0
+        self.difficulty = 0
+        self.difficulty_ms = 500
+        self.points_modifier = 100
+        self.move_down_points = 1
         self.is_music_on = True
         self.rotate_sound = pygame.mixer.Sound("assets/sounds/rotate.ogg")
         self.clear_sound = pygame.mixer.Sound("assets/sounds/clear.ogg")
@@ -32,9 +36,28 @@ class Game:
             pygame.mixer.music.load("assets/sounds/music.ogg")
             pygame.mixer.music.play(-1)
 
+    def toggle_difficulty(self):
+        if self.difficulty == 0:
+            self.difficulty = 1
+            self.difficulty_ms = 400
+        elif self.difficulty == 1:
+            self.difficulty = 2
+            self.difficulty_ms = 300
+        elif self.difficulty == 2:
+            self.difficulty = 0
+            self.difficulty_ms = 500
+        return self.difficulty_ms
+
     def update_score(self, lines_cleared, move_down_points):
+        if self.difficulty == 0:
+            self.points_modifier = 100
+        elif self.difficulty == 1:
+            self.points_modifier = 125
+        elif self.difficulty == 2:
+            self.points_modifier = 150
+
         if lines_cleared > 0:
-            self.score += int(100 * (2 ** (lines_cleared - 1)))
+            self.score += int(self.points_modifier * (2 ** (lines_cleared - 1)))
         self.score += move_down_points
 
     # def save_highscore(self):

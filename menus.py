@@ -8,7 +8,7 @@ BUTTON_COLOR = Colors.light_blue
 BUTTON_HOVER_COLOR = Colors.white
 TEXT_COLOR = Colors.dark_blue
 
-# this function draws centered text (i guess)
+# this function draws centered text
 def draw_text(text, font, color, surface, x, y):
     text_obj = font.render(text, True, color)
     text_rect = text_obj.get_rect(center=(x, y))
@@ -32,10 +32,8 @@ def pause_menu(screen, game, press_2p_120f, press_2p_40f, BOUNCE_UPDATE, SCREEN_
         draw_text("PAUSED", press_2p_120f, Colors.white, screen, SCREEN_WIDTH // 2, 300 + bounce_offset)
 
         # draw buttons
-        continue_button = draw_button("Continue", 350 - 50, 450, BUTTON_WIDTH + 100, BUTTON_HEIGHT, screen,
-                                      press_2p_40f)
-        settings_button = draw_button("Settings", 350 - 50, 550, BUTTON_WIDTH + 100, BUTTON_HEIGHT, screen,
-                                      press_2p_40f)
+        continue_button = draw_button("Continue", 350 - 50, 450, BUTTON_WIDTH + 100, BUTTON_HEIGHT, screen, press_2p_40f)
+        settings_button = draw_button("Settings", 350 - 50, 550, BUTTON_WIDTH + 100, BUTTON_HEIGHT, screen, press_2p_40f)
         quit_button = draw_button("Quit", 350 - 50, 650, BUTTON_WIDTH + 100, BUTTON_HEIGHT, screen, press_2p_40f)
 
         pygame.display.update()
@@ -47,10 +45,10 @@ def pause_menu(screen, game, press_2p_120f, press_2p_40f, BOUNCE_UPDATE, SCREEN_
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                paused = False
+                paused = False  # Unpause the game
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if continue_button.collidepoint(event.pos):
-                    paused = False
+                    paused = False  # Unpause the game
                 elif settings_button.collidepoint(event.pos):
                     print("Settings menu placeholder")
                 elif quit_button.collidepoint(event.pos):
@@ -75,7 +73,7 @@ def main_menu(screen, game, press_2p_120f, press_2p_40f, BOUNCE_UPDATE):
         screen.fill(Colors.dark_blue)
         draw_text("TETRIS", press_2p_120f, Colors.white, screen, 500, 300 + bounce_offset)
         play_button = draw_button("Play", 350 - 50, 450, BUTTON_WIDTH + 100, BUTTON_HEIGHT, screen, press_2p_40f)
-        settings_button = draw_button("Settings", 350 - 50, 550, BUTTON_WIDTH + 100, BUTTON_HEIGHT, screen,press_2p_40f)
+        settings_button = draw_button("Settings", 350 - 50, 550, BUTTON_WIDTH + 100, BUTTON_HEIGHT, screen, press_2p_40f)
         quit_button = draw_button("Quit", 350 - 50, 650, BUTTON_WIDTH + 100, BUTTON_HEIGHT, screen, press_2p_40f)
 
         pygame.display.update()
@@ -88,8 +86,17 @@ def main_menu(screen, game, press_2p_120f, press_2p_40f, BOUNCE_UPDATE):
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
-                    return
+                    return  # Start the game when Enter is pressed
                 if event.key == pygame.K_q:
+                    pygame.quit()
+                    sys.exit()
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if play_button.collidepoint(event.pos):
+                    return  # Start the game
+                elif settings_button.collidepoint(event.pos):
+                    print("Settings menu placeholder")
+                elif quit_button.collidepoint(event.pos):
                     pygame.quit()
                     sys.exit()
 

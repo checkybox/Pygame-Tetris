@@ -20,6 +20,17 @@ class Game:
         self.rotate_sound = pygame.mixer.Sound("assets/sounds/rotate.ogg")
         self.clear_sound = pygame.mixer.Sound("assets/sounds/clear.ogg")
 
+        self.is_music_on_states = {
+            True: "Music:ON",
+            False: "Music:OFF"
+        }
+
+        self.difficulty_states = {
+            0 : "Mode:Easy",
+            1 : "Mode:Medium",
+            2 : "Mode:Hard"
+        }
+
         # load main menu music
         pygame.mixer.music.load("assets/sounds/music.ogg")
         pygame.mixer.music.play(-1)

@@ -1,5 +1,6 @@
 import pygame, sys
 
+import game
 from colors import Colors
 from fonts import Fonts
 
@@ -30,18 +31,9 @@ def settings_menu(screen, game, SCREEN_WIDTH, GAME_UPDATE):
         screen.fill(Colors.dark_blue)
         draw_text("SETTINGS", Fonts.press_2p(110), Colors.white, screen, SCREEN_WIDTH // 2, 300)
 
-        # draw buttons
-        if game.is_music_on:
-            music_toggle = draw_button("Music:ON", 350 - 50, 450, BUTTON_WIDTH + 100, BUTTON_HEIGHT, screen, Fonts.press_2p(40))
-        else:
-            music_toggle = draw_button("Music:OFF", 350 - 50, 450, BUTTON_WIDTH + 100, BUTTON_HEIGHT, screen, Fonts.press_2p(40))
-
-        if game.difficulty == 0:
-            difficulty_toggle = draw_button("Mode:Easy", 350 - 50, 550, BUTTON_WIDTH + 100, BUTTON_HEIGHT, screen, Fonts.press_2p(40))
-        elif game.difficulty == 1:
-            difficulty_toggle = draw_button("Mode:Medium", 350 - 100, 550, BUTTON_WIDTH + 200, BUTTON_HEIGHT, screen,Fonts.press_2p(40))
-        elif game.difficulty == 2:
-            difficulty_toggle = draw_button("Mode:Hard", 350 - 50, 550, BUTTON_WIDTH + 100, BUTTON_HEIGHT, screen,Fonts.press_2p(40))
+        # dynamic buttons
+        music_toggle = draw_button(game.is_music_on_states[game.is_music_on], 350 - 100, 450, BUTTON_WIDTH + 200, BUTTON_HEIGHT, screen, Fonts.press_2p(40))
+        difficulty_toggle = draw_button(game.difficulty_states[game.difficulty], 350 - 100, 550, BUTTON_WIDTH + 200, BUTTON_HEIGHT, screen, Fonts.press_2p(40))
 
         pygame.display.update()
 

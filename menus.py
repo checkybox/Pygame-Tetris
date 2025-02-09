@@ -148,8 +148,7 @@ def game_over_menu(screen, game, BUTTON_WIDTH, BUTTON_HEIGHT, SCREEN_WIDTH):
     while game.game_over:
         screen.fill(Colors.dark_blue)
         draw_text("GAME OVER", Fonts.press_2p(100), Colors.white, screen, SCREEN_WIDTH // 2, 300)
-        draw_text("SCORE:", Fonts.press_2p(60), Colors.white, screen, SCREEN_WIDTH // 2 - 150, 400)
-        draw_text(f"{game.score}", Fonts.press_2p(40), Colors.white, screen, SCREEN_WIDTH // 2 + 150, 400)
+        draw_text(f"SCORE:{game.score}", Fonts.press_2p(40), Colors.white, screen, SCREEN_WIDTH // 2 , 400)
         restart_button = draw_button("Restart", 350 - 50, 450, BUTTON_WIDTH + 100, BUTTON_HEIGHT, screen, Fonts.press_2p(40))
         quit_button = draw_button("Quit", 350 - 50, 550, BUTTON_WIDTH + 100, BUTTON_HEIGHT, screen, Fonts.press_2p(40))
         pygame.display.update()

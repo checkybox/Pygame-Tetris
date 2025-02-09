@@ -1,4 +1,5 @@
 class Colors:
+    # block cell colors
     dark_grey = (26, 31, 40)
     green = (47, 230, 23)
     red = (232, 18, 18)
@@ -7,6 +8,8 @@ class Colors:
     purple = (166, 0, 247)
     cyan = (21, 204, 209)
     blue = (13, 64, 216)
+
+    # other colors
     white = (255, 255, 255)
     dark_blue = (44, 44, 127)
     light_blue = (59, 85, 162)

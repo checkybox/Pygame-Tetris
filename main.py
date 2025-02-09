@@ -2,25 +2,8 @@ import pygame, sys, os
 
 from game import Game
 from colors import Colors
+from fonts import Fonts
 from menus import draw_text, draw_button, pause_menu, main_menu, game_over_menu
-
-# TODO:
-#  - features:
-#  ---------- (done) - count score and highscore
-#  - change blocks and background colors (by pre-defined schemes or by hand)
-#  ---------- (done) choose difficulty (change game loop interval)
-#  -
-#  - (wip) ability to turn off music/sounds
-#  - spawn blocks above the grid (?)
-#  ---------- (done) - fix score addition for 4 and more lines cleared
-#  ---------- (done) - fix crash when rotating a block near the edge
-#  - fix crash when rotating a block near the bottom
-#  - fix block overlap when rotating near another block
-#  - add settings menu for changing music, sound effects, and background color
-#  ---------- (done) add pause menu
-#  ---------- (done) show main menu before starting the game
-#  - (wip) add better game over screen
-#  - add animations for clearing rows (?)
 
 pygame.init()
 
@@ -33,32 +16,24 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Pygame Tetris")
 clock = pygame.time.Clock()
 
-# fonts
-press_2p_120f = pygame.font.Font(f"{os.getcwd()}/assets/fonts/Press_Start_2P/PressStart2P-Regular.ttf", 120)
-press_2p_80f = pygame.font.Font(f"{os.getcwd()}/assets/fonts/Press_Start_2P/PressStart2P-Regular.ttf", 120)
-press_2p_40f = pygame.font.Font(f"{os.getcwd()}/assets/fonts/Press_Start_2P/PressStart2P-Regular.ttf", 40)
-title_f = pygame.font.Font(None, 80)
-menu_f = pygame.font.Font(None, 120)
+# initialize text surfaces
+score_surface = Fonts.press_2p(40).render("Score", True, Colors.white)
+highscore_surface = Fonts.press_2p(40).render("Highscore", True, Colors.white)
+next_surface = Fonts.press_2p(40).render("Next", True, Colors.white)
 
-# text surfaces
-score_surface = press_2p_40f.render("Score", True, Colors.white)
-highscore_surface = press_2p_40f.render("Highscore", True, Colors.white)
-next_surface = press_2p_40f.render("Next", True, Colors.white)
-game_over_surface = press_2p_40f.render("GAME OVER", True, Colors.white)
-
-# ui elements
+# draw ui elements
 score_rect = pygame.Rect(640, 110, 340, 120)
 highscore_rect = pygame.Rect(640, 330, 340, 120)
 next_rect = pygame.Rect(640, 630, 340, 360)
 
-# game instance
+# initialize game instance and timers
 game = Game()
 GAME_UPDATE = pygame.USEREVENT
 BOUNCE_UPDATE = pygame.USEREVENT + 1
 pygame.time.set_timer(GAME_UPDATE, game.difficulty_ms)
 pygame.time.set_timer(BOUNCE_UPDATE, 1000)
 
-# pause state
+# save pause state
 paused = False
 
 # button properties
@@ -79,12 +54,12 @@ while True:
             sys.exit()
 
         # game over handler
+        # when game_over is false, it tries to save the score
+        # by calling game.save_score(game.score)
+        # next it calls the game_over_menu function which handles the rest
         if game.game_over:
             game.save_score(game.score)
             game_over_menu(screen, game, BUTTON_WIDTH, BUTTON_HEIGHT, SCREEN_WIDTH)
-            game.game_over = False
-            game.reset()
-            continue
 
         if event.type == pygame.KEYDOWN:
             # pause button handler
@@ -93,6 +68,7 @@ while True:
                 pause_menu(screen, game, BOUNCE_UPDATE, SCREEN_WIDTH, GAME_UPDATE, paused)
 
             # game controls handler
+            # works for both arrows and wasd
             if not game.game_over:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     game.move_left()
@@ -104,24 +80,23 @@ while True:
                 elif event.key == pygame.K_UP or event.key == pygame.K_w:
                     game.rotate()
 
+        # this makes the block go downwards by itself
         if event.type == GAME_UPDATE and not game.game_over:
             game.move_down()
 
     # drawing
     # if score is higher than highscore, display score instead
-    score_value_surface = title_f.render(str(game.score), True, Colors.white)
+    score_value_surface = Fonts.press_2p(40).render(str(game.score), True, Colors.white)
     if not game.score > game.highscore:
-        highscore_value_surface = title_f.render(str(game.highscore), True, Colors.white)
+        highscore_value_surface = Fonts.press_2p(40).render(str(game.highscore), True, Colors.white)
     else:
-        highscore_value_surface = title_f.render(str(game.score), True, Colors.white)
+        highscore_value_surface = Fonts.press_2p(40).render(str(game.score), True, Colors.white)
 
+    # display surfaces
     screen.fill(Colors.darkish_blue)
     screen.blit(score_surface, (710, 40, 100, 100))
     screen.blit(highscore_surface, (630, 260, 100, 100))
     screen.blit(next_surface, (730, 550, 100, 100))
-
-    # if game.game_over:
-    #     screen.blit(game_over_surface, (640, 1200, 100, 100))
 
     pygame.draw.rect(screen, Colors.light_blue, score_rect, 0, 10)
     screen.blit(score_value_surface, score_value_surface.get_rect(centerx = score_rect.centerx, centery = score_rect.centery))

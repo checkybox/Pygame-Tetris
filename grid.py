@@ -32,10 +32,12 @@ class Grid:
                 return False
         return True
 
+    # clear a row when it's full
     def clear_row(self, row):
         for column in range(self.num_cols):
             self.grid[row][column] = 0
 
+    # move the next row down after clearing the first one
     def move_row_down(self, row, num_rows):
         for column in range(self.num_cols):
             self.grid[row + num_rows][column] = self.grid[row][column]

@@ -25,11 +25,14 @@ def draw_button(text, x, y, width, height, screen, font):
     draw_text(text, font, TEXT_COLOR, screen, x + width // 2, y + height // 2)
     return button_rect
 
-def settings_menu(screen, game, SCREEN_WIDTH, GAME_UPDATE):
+def settings_menu(screen, game, SCREEN_WIDTH, GAME_UPDATE, BOUNCE_UPDATE):
     running = True
+    bounce_offset = 0
+    bounce_direction = 15
+
     while running:
         screen.fill(Colors.dark_blue)
-        draw_text("SETTINGS", Fonts.press_2p(110), Colors.white, screen, SCREEN_WIDTH // 2, 300)
+        draw_text("SETTINGS", Fonts.press_2p(110), Colors.white, screen, SCREEN_WIDTH // 2, 300 + bounce_offset)
 
         # dynamic buttons
         music_toggle = draw_button(game.is_music_on_states[game.is_music_on], 350 - 100, 450, BUTTON_WIDTH + 200, BUTTON_HEIGHT, screen, Fonts.press_2p(40))
@@ -65,6 +68,14 @@ def settings_menu(screen, game, SCREEN_WIDTH, GAME_UPDATE):
                     running = False
                     game.rotate_sound.play()
 
+            # bounce animation
+            if event.type == BOUNCE_UPDATE:
+                if bounce_offset >= 15:
+                    bounce_direction = -15
+                elif bounce_offset <= -15:
+                    bounce_direction = 15
+                bounce_offset += bounce_direction
+
 def pause_menu(screen, game, BOUNCE_UPDATE, SCREEN_WIDTH, GAME_UPDATE, paused):
     bounce_offset = 0
     bounce_direction = 15
@@ -97,7 +108,7 @@ def pause_menu(screen, game, BOUNCE_UPDATE, SCREEN_WIDTH, GAME_UPDATE, paused):
                     game.rotate_sound.play()
                     paused = False
                 elif settings_button.collidepoint(event.pos):
-                    settings_menu(screen, game, SCREEN_WIDTH, GAME_UPDATE)
+                    settings_menu(screen, game, SCREEN_WIDTH, GAME_UPDATE, BOUNCE_UPDATE)
                     game.rotate_sound.play()
                 elif quit_button.collidepoint(event.pos):
                     game.save_score(game.score)
@@ -129,7 +140,6 @@ def main_menu(screen, game, BOUNCE_UPDATE, SCREEN_WIDTH, GAME_UPDATE):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 game.save_score(game.score)
-                game.rotate_sound.play()
                 pygame.quit()
                 sys.exit()
 
@@ -140,7 +150,7 @@ def main_menu(screen, game, BOUNCE_UPDATE, SCREEN_WIDTH, GAME_UPDATE):
                     return
                 elif settings_button.collidepoint(event.pos):
                     game.rotate_sound.play()
-                    settings_menu(screen, game, SCREEN_WIDTH, GAME_UPDATE)
+                    settings_menu(screen, game, SCREEN_WIDTH, GAME_UPDATE, BOUNCE_UPDATE)
                 elif quit_button.collidepoint(event.pos):
                     game.save_score(game.score)
                     pygame.quit()

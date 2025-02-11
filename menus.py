@@ -35,6 +35,7 @@ def settings_menu(screen, game, SCREEN_WIDTH, GAME_UPDATE):
         music_toggle = draw_button(game.is_music_on_states[game.is_music_on], 350 - 100, 450, BUTTON_WIDTH + 200, BUTTON_HEIGHT, screen, Fonts.press_2p(40))
         sounds_toggle = draw_button(game.is_sounds_on_states[game.is_sounds_on], 350 - 100, 550, BUTTON_WIDTH + 200, BUTTON_HEIGHT, screen, Fonts.press_2p(40))
         difficulty_toggle = draw_button(game.difficulty_states[game.difficulty], 350 - 100, 650, BUTTON_WIDTH + 200, BUTTON_HEIGHT, screen, Fonts.press_2p(40))
+        return_button = draw_button("Return", 350 - 100, 750, BUTTON_WIDTH + 200, BUTTON_HEIGHT, screen, Fonts.press_2p(40))
 
         pygame.display.update()
 
@@ -59,6 +60,9 @@ def settings_menu(screen, game, SCREEN_WIDTH, GAME_UPDATE):
                 elif difficulty_toggle.collidepoint(event.pos):
                     new_difficulty_ms = game.toggle_difficulty()
                     pygame.time.set_timer(GAME_UPDATE, new_difficulty_ms)
+                    game.rotate_sound.play()
+                elif return_button.collidepoint(event.pos):
+                    running = False
                     game.rotate_sound.play()
 
 def pause_menu(screen, game, BOUNCE_UPDATE, SCREEN_WIDTH, GAME_UPDATE, paused):
